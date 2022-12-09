@@ -37,8 +37,8 @@ pipeline {
         //         //   sh 'export publicDnsNameProducer=$(aws ec2 describe-instances --filters Name=tag:Name,Values=skiplocked_producer --query "Reservations[*].Instances[*].PublicDnsName" --output text)'
         //         //   sh 'echo $publicDnsNameProducer'
         //         //   sh 'scp -i ~/.ssh/mdymen2.pem  /var/lib/jenkins/workspace/skiplocked/producer/target/<FILE>.jar ec2-user@$test:~/.'
-        //           //sh 'aws s3 cp /var/lib/jenkins/workspace/skiplocked/producer/target/<FILE>.jar s3://skiplocked-project/'
-        //           //sh 'aws s3 cp /var/lib/jenkins/workspace/skiplocked/consumer/target/<FILE>.jar s3://skiplocked-project/'
+        //           //sh 'aws s3 cp /var/lib/jenkins/workspace/skiplocked/producer/target/<FILE>.jar s3://<BUCKET>/'
+        //           //sh 'aws s3 cp /var/lib/jenkins/workspace/skiplocked/consumer/target/<FILE>.jar s3://<BUCKET>/'
         //             dir ('static') {
         //                 sh "chmod 700 copy.sh"
         //                 sh "./copy.sh"
