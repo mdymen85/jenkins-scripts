@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'java-17'
+        maven 'mvn-3.8.3'
+    }
+
+
+    stages {
+        stage('Pull') {
+            steps {
+                git branch: 'main', credentialsId: 'mdymen85-github', url: 'https://github.com/mdymen85/skiplocked'
+            }
+        }        
+        stage('Build') {
+            steps {
+                withAWS(credentials: 'aws2', region: 'us-east-1') {
+                    sh 'aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" --targets \'[{"Key":"InstanceIds","Values":["i-0c22f420d4db972ce"]}]\' --parameters \'{"workingDirectory":[""],"executionTimeout":["3600"],"commands":["wget https://skiplocked-project.s3.amazonaws.com/simple-0.0.1-SNAPSHOT.jar","nohup java -Dserver.port=8080 -jar simple-0.0.1-SNAPSHOT.jar &"]}\' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --region us-east-1'
+                }
+                // sh '/home/mtuser/Projetos/script-test.sh'
+                // sshagent(['mdymen2']) {
+                 //   sh "scp /var/lib/jenkins/workspace/skiplocked/producer/target/producer-0.0.1-SNAPSHOT.jar ec2-user@ec2-34-228-57-212.compute-1.amazonaws.com:~/."
+                // }
+                
+                // sh 'java -version'
+                // dir ('consumer') {
+                //     sh 'mvn clean install -DskipTests=true'
+                // }
+                // dir ('producer') {
+                //     sh 'mvn clean install -DskipTests=true'
+                // }
+            }
+        }
+        // stage('Deploy') {
+        //     steps {
+        //         withAWS(credentials: 'aws2', region: 'us-east-1') {
+        //         //   sh 'export publicDnsNameProducer=$(aws ec2 describe-instances --filters Name=tag:Name,Values=skiplocked_producer --query "Reservations[*].Instances[*].PublicDnsName" --output text)'
+        //         //   sh 'echo $publicDnsNameProducer'
+        //         //   sh 'scp -i ~/.ssh/mdymen2.pem  /var/lib/jenkins/workspace/skiplocked/producer/target/producer-0.0.1-SNAPSHOT.jar ec2-user@$test:~/.'
+        //           //sh 'aws s3 cp /var/lib/jenkins/workspace/skiplocked/producer/target/producer-0.0.1-SNAPSHOT.jar s3://skiplocked-project/'
+        //           //sh 'aws s3 cp /var/lib/jenkins/workspace/skiplocked/consumer/target/consumer-0.0.1-SNAPSHOT.jar s3://skiplocked-project/'
+        //             dir ('static') {
+        //                 sh "chmod 700 copy.sh"
+        //                 sh "./copy.sh"
+        //             }
+        //         }
+        //     }
+        // }
+                
+    }
+}
